@@ -1,26 +1,12 @@
-version: '3.8'
-
 services:
-  backend:
-    build: ./backend
-    command: gunicorn -w 2 -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8000
-    expose:
-      - "8000"
-
-  frontend:
-    build: ./frontend
-    volumes:
-      - ./frontend/build:/usr/share/nginx/html
-    depends_on:
-      - backend
-
   nginx:
-    image: nginx:alpine
+    build: ./nginx  # Указываем папку с Dockerfile для Nginx
     ports:
       - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/build:/usr/share/nginx/html
     depends_on:
       - backend
-      - frontend
+
+  backend:
+    build: ./backend  # Указываем папку с Dockerfile для FastAPI
+    expose:
+      - "8000"
